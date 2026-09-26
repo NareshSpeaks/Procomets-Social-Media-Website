@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  .card {
+    width: 350px;
+    height: 622px; /* 9:16 */
+    overflow: hidden;
+    position: relative;
+    border-radius: 24px;
+    background: black;
+  }
+  .ig-iframe {
+    position: absolute;
+    top: -54px;
+    left: -2px; /* some border compensation */
+    width: calc(100% + 4px);
+    height: 1000px;
+    border: none;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <iframe class="ig-iframe" src="https://www.instagram.com/reel/DVlP4FEk2A1/embed/?hidecaption=1" scrolling="no"></iframe>
+</div>
+</body>
+</html>

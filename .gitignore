@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+.env.local
+
+*.mp4
+*.MP4
+*.mov
+*.MOV
