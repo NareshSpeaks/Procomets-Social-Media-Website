@@ -28,34 +28,52 @@ export const HeroMediaRail: React.FC = () => {
       // This relies on the browser's layout engine to factor in gaps and negative margins.
       const sequenceWidth = sequenceStartCard.offsetLeft - firstCard.offsetLeft;
 
+      let tween: gsap.core.Tween;
+
       ctx = gsap.context(() => {
-        // Animate the track to the right by exactly one sequence width,
-        // then reset to -sequenceWidth seamlessly.
-        gsap.fromTo(
+        tween = gsap.fromTo(
           track,
           { x: -sequenceWidth },
           {
             x: 0,
-            duration: sequenceWidth / 50, // Constant ~50px/sec movement
+            duration: sequenceWidth / 50,
             ease: 'none',
             repeat: -1,
           }
         );
       }, trackRef);
+
+      // Pause animation when not in viewport to save CPU/Battery
+      const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          tween?.play();
+        } else {
+          tween?.pause();
+        }
+      });
+      observer.observe(track);
+      
+      return () => {
+        observer.disconnect();
+      };
     };
 
-    // Small delay ensures fonts, images, and flex layout are fully painted before measuring
-    const timeout = setTimeout(initLoop, 150);
+    let observerCleanup: (() => void) | undefined;
+    const timeout = setTimeout(() => {
+      observerCleanup = initLoop();
+    }, 150);
 
     const resizeObserver = new ResizeObserver(() => {
       if (ctx) ctx.revert();
-      initLoop();
+      if (observerCleanup) observerCleanup();
+      observerCleanup = initLoop();
     });
     resizeObserver.observe(document.body);
 
     return () => {
       clearTimeout(timeout);
       if (ctx) ctx.revert();
+      if (observerCleanup) observerCleanup();
       resizeObserver.disconnect();
     };
   }, []);
@@ -82,7 +100,7 @@ export const HeroMediaRail: React.FC = () => {
           <div
             ref={trackRef}
             className="flex items-center -space-x-4 sm:-space-x-6 md:-space-x-8 lg:-space-x-10 w-max"
-            style={{ transformStyle: 'preserve-3d' }}
+            style={{ transformStyle: 'preserve-3d', willChange: 'transform' }}
           >
             {displayImages.map((src, index) => {
               const i = index % heroImages.length;

@@ -78,6 +78,7 @@ export const HorizontalVideoTile: React.FC<HorizontalVideoTileProps> = ({ projec
            <iframe
             ref={iframeRef}
             src={`https://www.youtube.com/embed/${project.youtubeId}?enablejsapi=1&autoplay=1&mute=1&controls=0&loop=1&playlist=${project.youtubeId}&playsinline=1&rel=0&modestbranding=1&disablekb=1&fs=0&iv_load_policy=3`}
+            loading="lazy"
             className={`w-full h-full object-cover scale-[1.35] transition-transform duration-700 ${isHovered ? 'scale-[1.37]' : ''} ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
             allow="autoplay; encrypted-media"
             onLoad={() => setIsLoaded(true)}

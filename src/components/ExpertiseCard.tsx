@@ -57,14 +57,14 @@ export const ExpertiseCard: React.FC<ExpertiseCardProps> = ({ expertise, index, 
         <div
           ref={layer1Ref}
           className="absolute inset-0 bg-[#0047FF] rounded-[6px]"
-          style={{ transform: 'translateY(0px) scale(0.96)' }}
+          style={{ transform: 'translateY(0px) scale(0.96)', willChange: 'transform' }}
         />
 
         {/* Layer 2 - Image strip */}
         <div
           ref={layer2Ref}
           className="absolute inset-0 rounded-[6px] overflow-hidden bg-[#0047FF]"
-          style={{ transform: 'translateY(0px) scale(0.98)' }}
+          style={{ transform: 'translateY(0px) scale(0.98)', willChange: 'transform' }}
         >
           <img
             src={expertise.images[0]}
@@ -77,7 +77,7 @@ export const ExpertiseCard: React.FC<ExpertiseCardProps> = ({ expertise, index, 
         <div
           ref={layer3Ref}
           className="absolute inset-0 bg-black rounded-[6px]"
-          style={{ transform: 'translateY(0px) scale(0.99)' }}
+          style={{ transform: 'translateY(0px) scale(0.99)', willChange: 'transform' }}
         />
       </div>
 

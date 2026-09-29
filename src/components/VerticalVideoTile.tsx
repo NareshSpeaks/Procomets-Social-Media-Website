@@ -103,6 +103,7 @@ export const VerticalVideoTile: React.FC<VerticalVideoTileProps> = ({ project, o
            <iframe
             ref={iframeRef}
             src={`https://www.youtube.com/embed/${project.youtubeId}?enablejsapi=1&autoplay=1&mute=1&controls=0&loop=1&playlist=${project.youtubeId}&playsinline=1&rel=0&modestbranding=1&disablekb=1&fs=0&iv_load_policy=3`}
+            loading="lazy"
             className={`w-full h-full object-cover scale-[1.35] transition-transform duration-700 ${isHovered ? 'scale-[1.37]' : ''} ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
             allow="autoplay; encrypted-media"
             onLoad={() => setIsLoaded(true)}
@@ -114,9 +115,11 @@ export const VerticalVideoTile: React.FC<VerticalVideoTileProps> = ({ project, o
             ref={videoRef}
             src={`/videos/${project.instagramId}.mp4`}
             loop
-            muted
+            muted={true}
             playsInline
-            onLoadedData={() => setIsLoaded(true)}
+            preload="metadata"
+            onLoadedMetadata={() => setIsLoaded(true)}
+            onCanPlay={() => setIsLoaded(true)}
             className={`w-full h-full object-cover transition-transform duration-700 ${isHovered ? 'scale-[1.02]' : 'scale-100'} ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
           />
         </div>

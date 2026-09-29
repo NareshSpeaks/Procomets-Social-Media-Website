@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter } from 'react-router-dom';
+import { ReactLenis } from 'lenis/react';
+import gsap from 'gsap';
 import { ScrollToTop } from './components/ScrollToTop';
 
 import { Footer } from './sections/Footer';
@@ -8,10 +10,24 @@ import { AnimatedRoutes } from './components/AnimatedRoutes';
 export const App: React.FC = () => {
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const lenisRef = useRef<any>(null);
+
+  useEffect(() => {
+    function update(time: number) {
+      lenisRef.current?.lenis?.raf(time * 1000);
+    }
+    gsap.ticker.add(update);
+    gsap.ticker.lagSmoothing(0);
+
+    return () => {
+      gsap.ticker.remove(update);
+    };
+  }, []);
 
   return (
-    <BrowserRouter>
-      <ScrollToTop />
+    <ReactLenis root ref={lenisRef} options={{ lerp: 0.08, smoothWheel: true, autoRaf: false }}>
+      <BrowserRouter>
+        <ScrollToTop />
       <div className="min-h-screen bg-white text-[#0C0C0C] font-navigation relative selection:bg-black selection:text-white">
         {/* Main Routes with 3.5s cinematic transitions */}
         <AnimatedRoutes onGetInTouchClick={() => setContactModalOpen(true)} />
@@ -119,6 +135,7 @@ export const App: React.FC = () => {
         )}
       </div>
     </BrowserRouter>
+    </ReactLenis>
   );
 };
 

@@ -78,7 +78,7 @@ export const VideoTile: React.FC<VideoTileProps> = ({ project, onClick }) => {
           poster={project.image}
           style={{ objectPosition: project.objectPosition || 'center center' }}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.01]"
-          muted
+          muted={true}
           loop
           playsInline
           autoPlay
