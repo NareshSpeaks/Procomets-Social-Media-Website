@@ -19,6 +19,7 @@ interface VerticalVideoTileProps {
 export const VerticalVideoTile: React.FC<VerticalVideoTileProps> = ({ project, onClick }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -28,16 +29,18 @@ export const VerticalVideoTile: React.FC<VerticalVideoTileProps> = ({ project, o
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            if (isPlaying && isLoaded) {
+            if (isPlaying) {
               if (project.platform === 'youtube' || project.youtubeId) {
                 iframeRef.current?.contentWindow?.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+              } else if (project.instagramId) {
+                videoRef.current?.play().catch(() => {});
               }
             }
           } else {
-            if (isLoaded) {
-              if (project.platform === 'youtube' || project.youtubeId) {
-                iframeRef.current?.contentWindow?.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-              }
+            if (project.platform === 'youtube' || project.youtubeId) {
+              iframeRef.current?.contentWindow?.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+            } else if (project.instagramId) {
+              videoRef.current?.pause();
             }
           }
         });
@@ -54,7 +57,7 @@ export const VerticalVideoTile: React.FC<VerticalVideoTileProps> = ({ project, o
         observer.unobserve(containerRef.current);
       }
     };
-  }, [isPlaying, isLoaded, project.platform, project.youtubeId, project.instagramId]);
+  }, [isPlaying, project.platform, project.youtubeId, project.instagramId]);
 
   const togglePlay = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -63,11 +66,15 @@ export const VerticalVideoTile: React.FC<VerticalVideoTileProps> = ({ project, o
     if (isPlaying) {
       if (project.platform === 'youtube' || project.youtubeId) {
         iframeRef.current?.contentWindow?.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      } else if (project.instagramId) {
+        videoRef.current?.pause();
       }
       setIsPlaying(false);
     } else {
       if (project.platform === 'youtube' || project.youtubeId) {
         iframeRef.current?.contentWindow?.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      } else if (project.instagramId) {
+        videoRef.current?.play().catch(() => {});
       }
       setIsPlaying(true);
     }
@@ -101,16 +108,18 @@ export const VerticalVideoTile: React.FC<VerticalVideoTileProps> = ({ project, o
           />
         </div>
       ) : project.instagramId ? (
-        <div className="absolute inset-0 overflow-hidden rounded-[24px]">
-          <iframe
-            ref={iframeRef as any}
-            src={`https://www.instagram.com/p/${project.instagramId}/embed`}
-            loading="lazy"
-            className={`w-full h-[calc(100%+80px)] -mt-[40px] object-cover scale-[1.35] transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
-            allow="autoplay; encrypted-media"
-            onLoad={() => setIsLoaded(true)}
-            scrolling="no"
-            frameBorder="0"
+        <div className="absolute inset-0 overflow-hidden rounded-[24px] pointer-events-none">
+          <video
+            ref={videoRef}
+            src={`/videos/${project.instagramId}.mp4`}
+            loop
+            muted={true}
+            playsInline
+            autoPlay
+            preload="metadata"
+            onLoadedMetadata={() => setIsLoaded(true)}
+            onCanPlay={() => setIsLoaded(true)}
+            className={`w-full h-full object-cover transition-transform duration-700 ${isHovered ? 'scale-[1.02]' : 'scale-100'} ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
           />
         </div>
       ) : (
