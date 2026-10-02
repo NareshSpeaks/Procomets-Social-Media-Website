@@ -116,10 +116,8 @@ export const VerticalVideoTile: React.FC<VerticalVideoTileProps> = ({ project, o
             muted={true}
             playsInline
             autoPlay
-            preload="metadata"
-            onLoadedMetadata={() => setIsLoaded(true)}
-            onCanPlay={() => setIsLoaded(true)}
-            className={`w-full h-full object-cover transition-transform duration-700 ${isHovered ? 'scale-[1.02]' : 'scale-100'} ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+            preload="auto"
+            className={`w-full h-full object-cover transition-transform duration-700 ${isHovered ? 'scale-[1.02]' : 'scale-100'}`}
           />
         </div>
       ) : (
